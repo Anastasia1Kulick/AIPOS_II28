@@ -51,7 +51,3 @@ reports/ivanov/lab1/src/topology.pkt
   - **дубликат** (совпадение хэша или похожесть текста ≥ 90%) → проверка падает (красный крестик), PR нельзя мержить без ручного разбора;
   - **подозрительное сходство** (60–90%) → проверка проходит, но в Summary выводится предупреждение для проверяющего;
   - иначе — проверка зелёная.
-
-Подробности реализации — в [`scripts/check_uniqueness.py`](scripts/check_uniqueness.py) и [`.github/workflows/uniqueness-check.yml`](.github/workflows/uniqueness-check.yml).
-
-Пороговые значения можно поменять через переменные окружения в workflow (`SIMILARITY_FAIL_THRESHOLD`, `SIMILARITY_WARN_THRESHOLD`).
