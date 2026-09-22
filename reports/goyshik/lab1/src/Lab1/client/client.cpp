@@ -4,21 +4,21 @@
 #include <string.h>
 #include <time.h>
 #include <conio.h>
-#include <winsock2.h>   // должен быть раньше windows.h
+#include <winsock2.h>   // Г¤Г®Г«Г¦ГҐГ­ ГЎГ»ГІГј Г°Г Г­ГјГёГҐ windows.h
 #include <windows.h>
 #include <string>
 #pragma comment(lib, "ws2_32.lib")
 
-static SOCKET g_sock = INVALID_SOCKET;   // сокет текущего соединения
-static volatile bool g_connected = false; // есть ли активное соединение
-static HANDLE g_thread = NULL;           // поток приёма данных от сервера
-static std::string g_host;               // адрес и порт текущего сервера
+static SOCKET g_sock = INVALID_SOCKET;   // Г±Г®ГЄГҐГІ ГІГҐГЄГіГ№ГҐГЈГ® Г±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГї
+static volatile bool g_connected = false; // ГҐГ±ГІГј Г«ГЁ Г ГЄГІГЁГўГ­Г®ГҐ Г±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГҐ
+static HANDLE g_thread = NULL;           // ГЇГ®ГІГ®ГЄ ГЇГ°ГЁВёГ¬Г  Г¤Г Г­Г­Г»Гµ Г®ГІ Г±ГҐГ°ГўГҐГ°Г 
+static std::string g_host;               // Г Г¤Г°ГҐГ± ГЁ ГЇГ®Г°ГІ ГІГҐГЄГіГ№ГҐГЈГ® Г±ГҐГ°ГўГҐГ°Г 
 static int g_port = 0;
-static std::string g_line;               // строка, которую сейчас набирает пользователь
-static FILE* g_log = NULL;               // файл протокола событий
-static CRITICAL_SECTION g_cs;            // защита консоли и файла от двух потоков
+static std::string g_line;               // Г±ГІГ°Г®ГЄГ , ГЄГ®ГІГ®Г°ГіГѕ Г±ГҐГ©Г·Г Г± Г­Г ГЎГЁГ°Г ГҐГІ ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«Гј
+static FILE* g_log = NULL;               // ГґГ Г©Г« ГЇГ°Г®ГІГ®ГЄГ®Г«Г  Г±Г®ГЎГ»ГІГЁГ©
+static CRITICAL_SECTION g_cs;            // Г§Г Г№ГЁГІГ  ГЄГ®Г­Г±Г®Г«ГЁ ГЁ ГґГ Г©Г«Г  Г®ГІ Г¤ГўГіГµ ГЇГ®ГІГ®ГЄГ®Гў
 
-// Текущее время в виде строки
+// Г’ГҐГЄГіГ№ГҐГҐ ГўГ°ГҐГ¬Гї Гў ГўГЁГ¤ГҐ Г±ГІГ°Г®ГЄГЁ
 std::string Now()
 {
     time_t t = time(NULL);
@@ -29,7 +29,7 @@ std::string Now()
     return b;
 }
 
-// Запись события в файл протокола со временем
+// Г‡Г ГЇГЁГ±Гј Г±Г®ГЎГ»ГІГЁГї Гў ГґГ Г©Г« ГЇГ°Г®ГІГ®ГЄГ®Г«Г  Г±Г® ГўГ°ГҐГ¬ГҐГ­ГҐГ¬
 void LogEvent(const std::string& msg)
 {
     EnterCriticalSection(&g_cs);
@@ -41,7 +41,7 @@ void LogEvent(const std::string& msg)
     LeaveCriticalSection(&g_cs);
 }
 
-// Вывод сообщения на консоль и повторный вывод приглашения с набранным текстом
+// Г‚Г»ГўГ®Г¤ Г±Г®Г®ГЎГ№ГҐГ­ГЁГї Г­Г  ГЄГ®Г­Г±Г®Г«Гј ГЁ ГЇГ®ГўГІГ®Г°Г­Г»Г© ГўГ»ГўГ®Г¤ ГЇГ°ГЁГЈГ«Г ГёГҐГ­ГЁГї Г± Г­Г ГЎГ°Г Г­Г­Г»Г¬ ГІГҐГЄГ±ГІГ®Г¬
 void Info(const std::string& msg)
 {
     EnterCriticalSection(&g_cs);
@@ -50,7 +50,7 @@ void Info(const std::string& msg)
     LeaveCriticalSection(&g_cs);
 }
 
-// Завершение соединения (выполняется один раз, даже если вызвали из двух мест)
+// Г‡Г ГўГҐГ°ГёГҐГ­ГЁГҐ Г±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГї (ГўГ»ГЇГ®Г«Г­ГїГҐГІГ±Гї Г®Г¤ГЁГ­ Г°Г Г§, Г¤Г Г¦ГҐ ГҐГ±Г«ГЁ ГўГ»Г§ГўГ Г«ГЁ ГЁГ§ Г¤ГўГіГµ Г¬ГҐГ±ГІ)
 void EndConnection(const char* reason)
 {
     EnterCriticalSection(&g_cs);
@@ -63,10 +63,10 @@ void EndConnection(const char* reason)
     LeaveCriticalSection(&g_cs);
 
     LogEvent("Connection closed with " + g_host + ":" + std::to_string(g_port) + " (" + reason + ")");
-    shutdown(g_sock, SD_BOTH);   // разбудит поток приёма, если он ждёт в recv
+    shutdown(g_sock, SD_BOTH);   // Г°Г Г§ГЎГіГ¤ГЁГІ ГЇГ®ГІГ®ГЄ ГЇГ°ГЁВёГ¬Г , ГҐГ±Г«ГЁ Г®Г­ Г¦Г¤ВёГІ Гў recv
 }
 
-// Ждёт завершения потока приёма и закрывает сокет (вызывать, только когда соединения нет)
+// Г†Г¤ВёГІ Г§Г ГўГҐГ°ГёГҐГ­ГЁГї ГЇГ®ГІГ®ГЄГ  ГЇГ°ГЁВёГ¬Г  ГЁ Г§Г ГЄГ°Г»ГўГ ГҐГІ Г±Г®ГЄГҐГІ (ГўГ»Г§Г»ГўГ ГІГј, ГІГ®Г«ГјГЄГ® ГЄГ®ГЈГ¤Г  Г±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГї Г­ГҐГІ)
 void CleanupSocket()
 {
     if (g_thread)
@@ -82,32 +82,30 @@ void CleanupSocket()
     }
 }
 
-// Поток приёма: читает ответы сервера, пишет в протокол и на экран
+// ГЏГ®ГІГ®ГЄ ГЇГ°ГЁВёГ¬Г : Г·ГЁГІГ ГҐГІ Г®ГІГўГҐГІГ» Г±ГҐГ°ГўГҐГ°Г , ГЇГЁГёГҐГІ Гў ГЇГ°Г®ГІГ®ГЄГ®Г« ГЁ Г­Г  ГЅГЄГ°Г Г­
 DWORD WINAPI RecvThread(LPVOID)
 {
     SOCKET s = g_sock;
     char buf[1024];
     int n;
-    while ((n = recv(s, buf, sizeof(buf) - 1, 0)) > 0)
+    std::string pending;
+    while ((n = recv(s, buf, sizeof(buf), 0)) > 0)
     {
-        buf[n] = '\0';
-        std::string data = buf;
-        size_t start = 0;
-        while (start < data.size())          
+        pending.append(buf, n);
+        size_t end;
+        while ((end = pending.find('\n')) != std::string::npos)
         {
-            size_t end = data.find('\n', start);
-            if (end == std::string::npos) end = data.size();
-            std::string line = data.substr(start, end - start);
+            std::string line = pending.substr(0, end);
+            pending.erase(0, end + 1);
             while (!line.empty() && line.back() == '\r') line.pop_back();
             if (!line.empty())
             {
                 LogEvent("Received: " + line);
                 Info("<< " + line);
             }
-            start = end + 1;
         }
     }
-    // сюда попадаем, если сервер закрыл соединение или оно оборвалось
+    // Г±ГѕГ¤Г  ГЇГ®ГЇГ Г¤Г ГҐГ¬, ГҐГ±Г«ГЁ Г±ГҐГ°ГўГҐГ° Г§Г ГЄГ°Г»Г« Г±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГҐ ГЁГ«ГЁ Г®Г­Г® Г®ГЎГ®Г°ГўГ Г«Г®Г±Гј
     if (g_connected)
     {
         EndConnection("closed by server or connection lost");
@@ -116,7 +114,7 @@ DWORD WINAPI RecvThread(LPVOID)
     return 0;
 }
 
-// Команда connect <адрес> <порт>
+// ГЉГ®Г¬Г Г­Г¤Г  connect <Г Г¤Г°ГҐГ±> <ГЇГ®Г°ГІ>
 void DoConnect(const std::string& host, int port)
 {
     if (g_connected)
@@ -131,7 +129,7 @@ void DoConnect(const std::string& host, int port)
     addr.sin_family = AF_INET;
     addr.sin_port = htons((u_short)port);
     unsigned long ip = inet_addr(host.c_str());
-    if (ip == INADDR_NONE)                    // возможно, задано имя (например, localhost)
+    if (ip == INADDR_NONE)                    // ГўГ®Г§Г¬Г®Г¦Г­Г®, Г§Г Г¤Г Г­Г® ГЁГ¬Гї (Г­Г ГЇГ°ГЁГ¬ГҐГ°, localhost)
     {
         hostent* h = gethostbyname(host.c_str());
         if (!h)
@@ -168,7 +166,7 @@ void DoConnect(const std::string& host, int port)
     g_thread = CreateThread(NULL, 0, RecvThread, NULL, 0, &id);
 }
 
-// Команда disconnect <адрес> <порт>
+// ГЉГ®Г¬Г Г­Г¤Г  disconnect <Г Г¤Г°ГҐГ±> <ГЇГ®Г°ГІ>
 void DoDisconnect(const std::string& host, int port)
 {
     if (!g_connected)
@@ -187,7 +185,7 @@ void DoDisconnect(const std::string& host, int port)
     Info("Disconnected.");
 }
 
-// Обработка введённой строки (вызывается по нажатию Home)
+// ГЋГЎГ°Г ГЎГ®ГІГЄГ  ГўГўГҐГ¤ВёГ­Г­Г®Г© Г±ГІГ°Г®ГЄГЁ (ГўГ»Г§Г»ГўГ ГҐГІГ±Гї ГЇГ® Г­Г Г¦Г ГІГЁГѕ Home)
 void HandleLine(const std::string& line)
 {
     if (line.empty())
@@ -215,7 +213,7 @@ void HandleLine(const std::string& line)
         return;
     }
 
-    // обычная строка: отправляем серверу
+    // Г®ГЎГ»Г·Г­Г Гї Г±ГІГ°Г®ГЄГ : Г®ГІГЇГ°Г ГўГ«ГїГҐГ¬ Г±ГҐГ°ГўГҐГ°Гі
     if (!g_connected)
     {
         Info("Not connected. Use: connect <address> <port>");
@@ -248,9 +246,9 @@ int main()
     for (;;)
     {
         int c = _getch();
-        if (c == 27) break;                      // Esc: выход
+        if (c == 27) break;                      // Esc: ГўГ»ГµГ®Г¤
 
-        if (c == 0 || c == 224)                  // расширенная клавиша: второй код - какая именно
+        if (c == 0 || c == 224)                  // Г°Г Г±ГёГЁГ°ГҐГ­Г­Г Гї ГЄГ«Г ГўГЁГёГ : ГўГІГ®Г°Г®Г© ГЄГ®Г¤ - ГЄГ ГЄГ Гї ГЁГ¬ГҐГ­Г­Г®
         {
             int k = _getch();
             if (k == 71)                         // Home
@@ -273,7 +271,7 @@ int main()
                 _putch(8); _putch(' '); _putch(8);
             }
         }
-        else if (c >= 32)                        // обычный символ
+        else if (c >= 32)                        // Г®ГЎГ»Г·Г­Г»Г© Г±ГЁГ¬ГўГ®Г«
         {
             g_line += (char)c;
             _putch(c);
