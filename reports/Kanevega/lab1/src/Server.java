@@ -38,10 +38,13 @@ public class Server {
                         }
                         
                         String fileName = parts[1];
+                        if (fileName.contains("..") || fileName.contains("/") || fileName.contains("\\")) {
+                            out.println("ERROR: Недопустимое имя файла.");
+                            continue;
+                        }
                         String fileContent = parts[2];
                         
                         File file = new File(fileName);
-                        boolean created = false;
                         
                         try {
                             // Создаем файл и записываем в него текст
