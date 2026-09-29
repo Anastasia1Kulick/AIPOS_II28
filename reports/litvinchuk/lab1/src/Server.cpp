@@ -58,21 +58,21 @@ int main() {
     cout << "Client connected!" << endl;
 
     char buffer[11];
+    int totalChecksum = 0;
 
     while (true) {
         int bytesReceived = recv(clientSocket, buffer, 10, 0);
         if (bytesReceived > 0) {
             buffer[bytesReceived] = '\0';
-            cout << "Received: " << buffer << endl;
+            cout << "Received chunk: " << buffer << endl;
 
-            int checksum = 0;
             for (int i = 0; i < bytesReceived; i++) {
-                checksum += (unsigned char)buffer[i];
+                totalChecksum += (unsigned char)buffer[i];
             }
 
-            cout << "Checksum: " << checksum << endl;
+            cout << "Accumulated checksum: " << totalChecksum << endl;
 
-            send(clientSocket, (char*)&checksum, sizeof(checksum), 0);
+            send(clientSocket, (char*)&totalChecksum, sizeof(totalChecksum), 0);
         }
         else {
             cout << "Client disconnected." << endl;

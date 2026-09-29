@@ -1,4 +1,6 @@
-﻿#include <iostream>
+﻿#define _CRT_SECURE_NO_WARNINGS
+
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <ctime>
@@ -15,12 +17,12 @@ using namespace std;
 
 string getTime() {
     time_t now = time(0);
-    tm ltm;
-    localtime_s(&ltm, &now); // Безопасная функция MSVC
+    tm* ltm = localtime(&now);
     char buf[80];
-    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &ltm);
+    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ltm);
     return string(buf);
 }
+
 void writeLog(string text) {
     ofstream log("log.txt", ios::app);
     if (log.is_open()) {
@@ -109,11 +111,11 @@ int main() {
 
                         send(clientSocket, chunk.c_str(), chunk.length(), 0);
 
-                        int checksum = 0;
-                        int bytesReceived = recv(clientSocket, (char*)&checksum, sizeof(checksum), 0);
+                        int accumulatedChecksum = 0;
+                        int bytesReceived = recv(clientSocket, (char*)&accumulatedChecksum, sizeof(accumulatedChecksum), 0);
 
                         if (bytesReceived > 0) {
-                            cout << "Chunk: " << chunk << " | Checksum: " << checksum << endl;
+                            cout << "Chunk: " << chunk << " | Total Checksum: " << accumulatedChecksum << endl;
                         }
                         else {
                             cout << "Server disconnected." << endl;
