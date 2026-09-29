@@ -1,0 +1,10 @@
+[2026-09-29 11:42:38] Start connection with 127.0.0.1:2000
+[2026-09-29 11:42:59] End connection
+[2026-09-29 11:43:07] Start connection with 127.0.0.1:2000
+[2026-09-29 11:43:19] Send string to server: eeeehello man
+[2026-09-29 11:43:44] Send string to server: hello its me
+[2026-09-29 11:43:53] End connection
+[2026-09-29 11:45:28] Start connection with 127.0.0.1:2000
+[2026-09-29 11:45:45] Send string to server: hello mann
+[2026-09-29 11:45:55] Send string to server: common its me 
+[2026-09-29 11:47:03] End connection
