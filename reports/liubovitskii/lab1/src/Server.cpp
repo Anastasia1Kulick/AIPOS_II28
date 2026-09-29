@@ -2,24 +2,44 @@
 #include <fstream>
 #include <string>
 #include <winsock2.h>
+#include <ctime>
 
 #pragma comment(lib, "ws2_32.lib")
 
 const int SERVER_PORT = 5555;
 
+// Функция логирования с временной меткой
+void logEvent(const std::string &direction, const std::string &data)
+{
+    std::ofstream logFile("server_protocol.txt", std::ios::app);
+    if (logFile.is_open())
+    {
+        std::time_t now = std::time(0);
+        char *dt = std::ctime(&now);
+        std::string timeStr(dt);
+        if (!timeStr.empty())
+            timeStr.pop_back(); // Удаляем \n
+
+        logFile << "[" << timeStr << "] " << direction << ": " << data << std::endl;
+        logFile.close();
+    }
+}
+
+// Функция обработки и сохранения файла
 bool processAndSaveFile(const std::string &rawData, std::string &outResponse)
 {
     if (rawData.find("save ") != 0)
     {
+        outResponse = "Ошибка: неверный формат команды. Ожидается 'save <имя> <текст>#end##'.\n";
         return false;
     }
 
-    size_t nameStart = 5;
+    size_t nameStart = 5; // Длина "save "
     size_t nameEnd = rawData.find_first_of(" \r\n", nameStart);
 
     if (nameEnd == std::string::npos)
     {
-        outResponse = "Ошибка: неверный формат команды.\n";
+        outResponse = "Ошибка: не указано имя файла.\n";
         return false;
     }
 
@@ -28,7 +48,7 @@ bool processAndSaveFile(const std::string &rawData, std::string &outResponse)
     size_t dataEnd = rawData.find("#end##");
     if (dataEnd == std::string::npos || dataEnd <= nameEnd)
     {
-        outResponse = "Ошибка: маркер конца данных не найден.\n";
+        outResponse = "Ошибка: маркер конца данных '#end##' не найден.\n";
         return false;
     }
 
@@ -44,7 +64,7 @@ bool processAndSaveFile(const std::string &rawData, std::string &outResponse)
     }
     else
     {
-        outResponse = "Ошибка: Не удалось создать файл.\n";
+        outResponse = "Ошибка: Не удалось создать файл (возможно, нет прав или неверное имя).\n";
         return false;
     }
 }
@@ -89,17 +109,25 @@ int main()
 
     std::cout << "Сервер запущен и слушает порт " << SERVER_PORT << "..." << std::endl;
 
-    sockaddr_in clientInfo;
-    int clientInfoSize = sizeof(clientInfo);
-    SOCKET connectionSocket = accept(listenSocket, (sockaddr *)&clientInfo, &clientInfoSize);
-
-    if (connectionSocket != INVALID_SOCKET)
+    // Внешний цикл для принятия новых клиентов
+    while (true)
     {
+        sockaddr_in clientInfo;
+        int clientInfoSize = sizeof(clientInfo);
+        SOCKET connectionSocket = accept(listenSocket, (sockaddr *)&clientInfo, &clientInfoSize);
+
+        if (connectionSocket == INVALID_SOCKET)
+        {
+            std::cerr << "Ошибка принятия подключения." << std::endl;
+            continue;
+        }
+
         std::cout << "Клиент подключился!" << std::endl;
 
         std::string accumulatedData = "";
         char receiveBuffer[512];
 
+        // Внутренний цикл для обработки одного клиента
         while (true)
         {
             int bytesRead = recv(connectionSocket, receiveBuffer, sizeof(receiveBuffer) - 1, 0);
@@ -107,33 +135,40 @@ int main()
             if (bytesRead <= 0)
             {
                 std::cout << "Клиент отключился." << std::endl;
-                break;
+                break; // Выходим из внутреннего цикла, чтобы принять нового клиента
             }
 
             receiveBuffer[bytesRead] = '\0';
             accumulatedData.append(receiveBuffer);
 
+            // Ищем маркер конца сообщения
             size_t markerPos = accumulatedData.find("#end##");
             if (markerPos != std::string::npos)
             {
                 std::string responseMsg;
                 std::string packet = accumulatedData.substr(0, markerPos + 6);
 
+                // Логируем полученную строку
+                logEvent("Принято от клиента", packet);
+
+                // Обрабатываем команду (даже если ошибка, мы не рвем соединение)
                 bool success = processAndSaveFile(packet, responseMsg);
 
+                // Отправляем ответ клиенту
                 send(connectionSocket, responseMsg.c_str(), responseMsg.length(), 0);
+                logEvent("Передано клиенту", responseMsg);
 
                 if (success)
                 {
                     std::cout << "Файл успешно сохранен." << std::endl;
-                    accumulatedData.erase(0, markerPos + 6);
                 }
                 else
                 {
-                    std::cerr << "Ошибка сохранения файла. Отключение клиента." << std::endl;
-                    closesocket(connectionSocket);
-                    break;
+                    std::cout << "Ошибка обработки команды. Соединение сохранено." << std::endl;
                 }
+
+                // Удаляем обработанную часть из буфера В ЛЮБОМ СЛУЧАЕ
+                accumulatedData.erase(0, markerPos + 6);
             }
         }
         closesocket(connectionSocket);
