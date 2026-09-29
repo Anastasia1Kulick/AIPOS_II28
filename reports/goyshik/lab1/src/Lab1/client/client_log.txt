@@ -1,0 +1,19 @@
+[2026-09-21 21:02:56] Connection established with 127.0.0.1:666
+[2026-09-21 21:02:56] Received: Type text ending with '.'; '..' ends the session
+[2026-09-21 21:04:37] Received: world hellow
+[2026-09-21 21:05:08] Received: Goy Tim
+[2026-09-21 21:05:31] Received: up give
+[2026-09-21 21:05:31] Received: Session finished
+[2026-09-21 21:05:31] Connection closed with 127.0.0.1:666 (closed by server or connection lost)
+[2026-09-21 21:57:53] Connection established with 127.0.0.1:666
+[2026-09-21 21:57:53] Received: Type text ending with '.'; '..' ends the session
+[2026-09-21 21:58:20] Received: world hellow
+[2026-09-21 21:58:41] Received: Tim Hi
+[2026-09-21 21:58:41] Received: Session finished
+[2026-09-21 21:58:41] Connection closed with 127.0.0.1:666 (closed by server or connection lost)
+[2026-09-21 22:01:26] Connection established with 127.0.0.1:666
+[2026-09-21 22:01:26] Received: Type text ending with '.'; '..' ends the session
+[2026-09-21 22:01:47] Received: world hellow
+[2026-09-21 22:02:00] Received: Tim Hi
+[2026-09-21 22:02:00] Received: Session finished
+[2026-09-21 22:02:00] Connection closed with 127.0.0.1:666 (closed by server or connection lost)

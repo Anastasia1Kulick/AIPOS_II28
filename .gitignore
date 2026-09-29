@@ -12,3 +12,25 @@ venv/
 # Packet Tracer backups
 *.pkt.bak
 *.pka.bak
+<<<<<<< HEAD
+
+# Visual Studio / C++ build files
+.vs/
+x64/
+Debug/
+Release/
+ipch/
+*.obj
+*.exe
+*.pdb
+*.user
+*.aps
+*.pch
+*.ipch
+*.ilk
+*.suo
+*.VC.db
+*.opensdf
+*.sdf
+=======
+>>>>>>> 26f9dc1be52cc1c41947e799325b42eb0e38867d
