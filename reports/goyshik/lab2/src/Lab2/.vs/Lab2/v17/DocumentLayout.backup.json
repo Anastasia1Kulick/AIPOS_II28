@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\LABS\\AIPOS_II28\\reports\\goyshik\\lab2\\src\\Lab2\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{943CA945-6363-4B3E-B061-C14C90EA98FB}|client\\client.vcxproj|D:\\LABS\\AIPOS_II28\\reports\\goyshik\\lab2\\src\\Lab2\\client\\client.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{943CA945-6363-4B3E-B061-C14C90EA98FB}|client\\client.vcxproj|solutionrelative:client\\client.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BD1549A7-D187-4E33-9FFD-94EBBEEAD850}|server\\server.vcxproj|D:\\LABS\\AIPOS_II28\\reports\\goyshik\\lab2\\src\\Lab2\\server\\server.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD1549A7-D187-4E33-9FFD-94EBBEEAD850}|server\\server.vcxproj|solutionrelative:server\\server.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "client.cpp",
+              "DocumentMoniker": "D:\\LABS\\AIPOS_II28\\reports\\goyshik\\lab2\\src\\Lab2\\client\\client.cpp",
+              "RelativeDocumentMoniker": "client\\client.cpp",
+              "ToolTip": "D:\\LABS\\AIPOS_II28\\reports\\goyshik\\lab2\\src\\Lab2\\client\\client.cpp",
+              "RelativeToolTip": "client\\client.cpp",
+              "ViewState": "AgIAAEEAAAAAAAAAAAAowHYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-10-01T14:12:42.259Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "server.cpp",
+              "DocumentMoniker": "D:\\LABS\\AIPOS_II28\\reports\\goyshik\\lab2\\src\\Lab2\\server\\server.cpp",
+              "RelativeDocumentMoniker": "server\\server.cpp",
+              "ToolTip": "D:\\LABS\\AIPOS_II28\\reports\\goyshik\\lab2\\src\\Lab2\\server\\server.cpp",
+              "RelativeToolTip": "server\\server.cpp",
+              "ViewState": "AgIAACAAAAAAAAAAAAAowFUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-10-01T14:12:15.42Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
