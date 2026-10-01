@@ -12,3 +12,23 @@ venv/
 # Packet Tracer backups
 *.pkt.bak
 *.pka.bak
+
+# Visual Studio / C++ build artifacts
+[Dd]ebug/
+[Rr]elease/
+x64/
+ipch/
+*.aps
+*.ilk
+*.ncb
+*.opensdf
+*.sdf
+*.suo
+*.cache
+*.user
+*.userosversion
+*.filters
+*.lock
+*.VC.db
+*.VC.opendb
+*.log
