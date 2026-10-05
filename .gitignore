@@ -12,3 +12,6 @@ venv/
 # Packet Tracer backups
 *.pkt.bak
 *.pka.bak
+
+*.class
+protocol.txt
