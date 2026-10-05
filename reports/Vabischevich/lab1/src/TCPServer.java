@@ -1,31 +1,33 @@
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 
-public class TCPServer {
-    public static final int PORT = 8080;
-    // Количество накапливаемых символов перед отправкой контрольной суммы
-    private static final int BLOCK_SIZE = 10;
+
+public class TcpServer {
+    public static final int PORT = 8080;   
 
     public static void main(String[] args) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(PORT);
-        System.out.println("TCP сервер запущен на порту " + PORT);
-
+        ServerSocket server = new ServerSocket(PORT);
+        System.out.println("Server started: " + server);
         try {
             while (true) {
-                // Ожидание подключения нового клиента
-                Socket socket = serverSocket.accept();
-                System.out.println("Подключён клиент: " + socket);
-
-                // обслуживание клиента в отдельном потоке,
-                new Thread(new ClientHandler(socket)).start();
+                Socket socket = server.accept();      // ожидание клиента (блокирующий вызов)
+                System.out.println("Connection accepted: " + socket);
+                try {
+                    new ClientHandler(socket).start(); // каждый клиент обслуживается в своём потоке
+                } catch (Exception e) {
+                    socket.close();
+                }
             }
         } finally {
-            serverSocket.close();
+            server.close();
         }
     }
 }
 
-class ClientHandler implements Runnable {
+/** Поток обслуживания одного клиента. */
+class ClientHandler extends Thread {
+    private static final int CHAIN_LEN = 10;   // длина цепочки символов
     private final Socket socket;
 
     ClientHandler(Socket socket) {
@@ -34,57 +36,39 @@ class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-        try (
-                Socket s = socket;
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(s.getInputStream(), "US-ASCII"));
-                PrintWriter out = new PrintWriter(
-                        new OutputStreamWriter(s.getOutputStream(), "US-ASCII"), true)
-        ) {
-            out.println("Hello, Student!");
-            out.println("Введите текст. Каждые " + TCPServer.BLOCK_SIZE
-                    + " символов сервер вернёт сумму ASCII-кодов.");
+        try {
+            // Reader читает символы, PrintWriter с автосбросом буфера (true) отправляет строки
+            Reader in = new BufferedReader(
+                    new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8)), true);
 
-            int sum = 0;     // сумма ASCII-кодов
-            int count = 0;   // сколько символов уже накоплено
-            String line;
+            out.println("Hello, Student!");        // приветствие (проверка через telnet)
 
-            while ((line = in.readLine()) != null) {
-                for (int i = 0; i < line.length(); i++) {
-                    char c = line.charAt(i);
-
-                    // Явно проверяем, что символ входит в ASCII (0..127).
-                    // Иначе кириллица и другие Unicode-символы дадут
-                    // неверный результат, а протокол обещает ASCII.
-                    if (c > 127) {
-                        out.println("Ошибка: символ вне ASCII: '" + c + "'");
-                        System.out.println("Клиент " + s + " прислал не-ASCII символ");
-                        return;
-                    }
-
-                    sum += c;   // для ASCII c == код символа
-                    count++;
-
-                    // Набрали блок из 10 символов — отправляем сумму
-                    if (count == TCPServer.BLOCK_SIZE) {
-                        out.println("Checksum = " + sum);
-                        System.out.println("Клиенту " + s + " отправлена сумма: " + sum);
-
-                        sum = 0;
-                        count = 0;
-                    }
+            int count = 0;   // сколько символов набрано в текущей цепочке
+            int sum = 0;     // контрольная сумма текущей цепочки
+            int ch;
+            while ((ch = in.read()) != -1) {
+                // символы конца строки не входят в цепочку
+                if (ch == '\r' || ch == '\n') continue;
+                sum += ch;
+                count++;
+                if (count == CHAIN_LEN) {          // цепочка из 10 символов принята
+                    System.out.println(socket.getPort() + ": checksum = " + sum);
+                    out.println("Checksum: " + sum);
+                    count = 0;
+                    sum = 0;
                 }
             }
-
-            // Если остались символы меньше блока — сообщаем остаток
-            if (count > 0) {
-                out.println("Остаток " + count + " символов, Checksum = " + sum);
-            }
-
-            System.out.println("Клиент отключён: " + socket);
-
         } catch (IOException e) {
-            System.err.println("Ошибка клиента: " + e.getMessage());
+            System.err.println("IO Exception: " + e.getMessage());
+        } finally {
+            try {
+                System.out.println("closing " + socket);
+                socket.close();                    // всегда освобождаем сокет
+            } catch (IOException e) {
+                System.err.println("Socket not closed");
+            }
         }
     }
 }
