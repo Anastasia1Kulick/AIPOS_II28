@@ -15,3 +15,22 @@ venv/
 
 *.class
 protocol.txt
+
+# Visual Studio / C++ build files
+.vs/
+x64/
+Debug/
+Release/
+ipch/
+*.obj
+*.exe
+*.pdb
+*.user
+*.aps
+*.pch
+*.ipch
+*.ilk
+*.suo
+*.VC.db
+*.opensdf
+*.sdf
