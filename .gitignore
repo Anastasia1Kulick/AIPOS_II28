@@ -16,11 +16,11 @@ venv/
 *.class
 protocol.txt
 
-# Visual Studio / C++ build files
+# Visual Studio / C++ build artifacts
 .vs/
+[Dd]ebug/
+[Rr]elease/
 x64/
-Debug/
-Release/
 ipch/
 *.obj
 *.exe
@@ -31,6 +31,12 @@ ipch/
 *.ipch
 *.ilk
 *.suo
+*.cache
+*.userosversion
+*.filters
+*.lock
 *.VC.db
+*.VC.opendb
 *.opensdf
 *.sdf
+*.log
