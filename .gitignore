@@ -13,6 +13,9 @@ venv/
 *.pkt.bak
 *.pka.bak
 
+*.class
+protocol.txt
+
 # Visual Studio / C++ build artifacts
 .vs/
 [Dd]ebug/
