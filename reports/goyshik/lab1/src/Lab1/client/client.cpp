@@ -33,7 +33,6 @@ int main() {
         return 1;
     }
 
-    // Изменено: SOCK_DGRAM заменен на SOCK_STREAM (TCP)
     SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == INVALID_SOCKET) {
         WSACleanup();
@@ -42,29 +41,28 @@ int main() {
 
     std::string ip = "";
     int port = 0;
-    std::cout << "Введите IP сервера (например, 127.0.0.1): ";
+    std::cout << "Р’РІРµРґРёС‚Рµ IP СЃРµСЂРІРµСЂР° (РЅР°РїСЂРёРјРµСЂ, 127.0.0.1): ";
     std::cin >> ip;
-    std::cout << "Введите порт (например, 666): ";
+    std::cout << "Р’РІРµРґРёС‚Рµ РїРѕСЂС‚ (РЅР°РїСЂРёРјРµСЂ, 666): ";
     std::cin >> port;
 
-    saveLog("Начало соединения с " + ip + ":" + std::to_string(port));
+    saveLog("РџРѕРїС‹С‚РєР° РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє " + ip + ":" + std::to_string(port));
 
     sockaddr_in srv{};
     srv.sin_family = AF_INET;
     srv.sin_addr.s_addr = inet_addr(ip.c_str());
     srv.sin_port = htons((u_short)port);
 
-    // Добавлено для TCP: установление соединения с сервером
     if (connect(sock, (sockaddr*)&srv, sizeof(srv)) == SOCKET_ERROR) {
-        std::cout << "Не удалось подключиться к серверу!\n";
-        saveLog("Ошибка подключения к серверу.");
+        std::cout << "РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ Рє СЃРµСЂРІРµСЂСѓ!\n";
+        saveLog("РћС€РёР±РєР° РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє СЃРµСЂРІРµСЂСѓ.");
         closesocket(sock);
         WSACleanup();
         return 1;
     }
 
-    std::cout << "\nГотово! Вводи текст и нажимай клавишу HOME для отправки.\n";
-    std::cout << "Для выхода напиши exit или отправь ..\n> ";
+    std::cout << "\nР“РѕС‚РѕРІРѕ! РќР°Р¶РјРёС‚Рµ РєР»Р°РІРёС€Сѓ HOME РґР»СЏ РѕС‚РїСЂР°РІРєРё.\n";
+    std::cout << "Р”Р»СЏ РІС‹С…РѕРґР° РІРІРµРґРёС‚Рµ exit РёР»Рё РЅР°Р¶РјРёС‚Рµ ..\n> ";
 
     std::string currentInput = "";
 
@@ -74,20 +72,18 @@ int main() {
 
             if (ch == 224 || ch == 0) {
                 int ext = _getch();
-                if (ext == 71) { // Клавиша HOME
+                if (ext == 71) { // РљР»Р°РІРёС€Р° HOME
                     std::cout << std::endl;
 
                     if (currentInput == "exit") {
-                        saveLog("Соединение закрыто пользователем.");
+                        saveLog("Р—Р°РІРµСЂС€РµРЅРёРµ СЂР°Р±РѕС‚С‹ РїСЂРёР»РѕР¶РµРЅРёСЏ.");
                         break;
                     }
 
                     if (!currentInput.empty()) {
-                        // Изменено: для TCP используется send вместо sendto
                         send(sock, currentInput.c_str(), (int)currentInput.length(), 0);
 
                         char buf[BUFFER_SIZE] = { 0 };
-                        // Изменено: для TCP используется recv вместо recvfrom
                         int recvBytes = recv(sock, buf, BUFFER_SIZE - 1, 0);
                         if (recvBytes > 0) {
                             std::string answer(buf);
@@ -98,13 +94,13 @@ int main() {
                             std::string timeStr(dt);
                             if (!timeStr.empty() && timeStr.back() == '\n') timeStr.pop_back();
 
-                            std::cout << "Ответ от сервера: " << answer << " (время: " << timeStr << ")\n";
+                            std::cout << "РћС‚РІРµС‚ РѕС‚ СЃРµСЂРІРµСЂР°: " << answer << " (Р’СЂРµРјСЏ: " << timeStr << ")\n";
 
-                            saveLog("Получена строка: \"" + answer + "\"");
+                            saveLog("РџРѕР»СѓС‡РµРЅ РѕС‚РІРµС‚: \"" + answer + "\"");
                         }
                         else if (recvBytes == 0) {
-                            std::cout << "Сервер разорвал соединение.\n";
-                            saveLog("Сервер разорвал соединение.");
+                            std::cout << "РЎРµСЂРІРµСЂ Р·Р°РєСЂС‹Р» СЃРѕРµРґРёРЅРµРЅРёРµ.\n";
+                            saveLog("РЎРµСЂРІРµСЂ Р·Р°РєСЂС‹Р» СЃРѕРµРґРёРЅРµРЅРёРµ.");
                             break;
                         }
                     }
@@ -126,7 +122,7 @@ int main() {
         }
     }
 
-    saveLog("Конец соединения.");
+    saveLog("РЎРµР°РЅСЃ Р·Р°РІРµСЂС€РµРЅ.");
     closesocket(sock);
     WSACleanup();
     return 0;

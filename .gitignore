@@ -14,21 +14,26 @@ venv/
 *.pka.bak
 
 # Visual Studio / C++ build artifacts
+.vs/
 [Dd]ebug/
 [Rr]elease/
 x64/
 ipch/
+*.obj
+*.exe
+*.pdb
+*.user
 *.aps
+*.pch
+*.ipch
 *.ilk
-*.ncb
-*.opensdf
-*.sdf
 *.suo
 *.cache
-*.user
 *.userosversion
 *.filters
 *.lock
 *.VC.db
 *.VC.opendb
+*.opensdf
+*.sdf
 *.log
