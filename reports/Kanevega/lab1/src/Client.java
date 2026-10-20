@@ -34,7 +34,7 @@ public class Client {
             out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
             System.out.println("Успешно подключено к серверу по умолчанию: " + DEFAULT_HOST + ":" + DEFAULT_PORT);
         } catch (IOException e) {
-            System.out.println("Ошибка автоподключения: " + e.getMessage() + ". Вы можете подключиться вручную через команду connect.");
+            System.out.println("Ошибка автоподключения: " + e.getMessage() + ".");
         }
 
         System.out.println("\nДоступные команды:");
@@ -102,6 +102,13 @@ public class Client {
         }
 
         // закрываем
+        if (socket != null && !socket.isClosed()) {
+             try {
+                 socket.close();
+             } catch (IOException e) {
+                 System.err.println("Ошибка при закрытии соединения: " + e.getMessage());
+             }
+        }
         if (protocolWriter != null) {
             protocolWriter.close();
         }
