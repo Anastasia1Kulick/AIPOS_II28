@@ -1,0 +1,10 @@
+>>> privet UDP
+<<< privet UDP
+>>> save capture-udp.txt
+<<< (no reply)
+>>> pervaya stroka
+<<< (no reply)
+>>> vtoraya stroka
+<<< (no reply)
+>>> #end##
+<<< OK: file capture-udp.txt created
