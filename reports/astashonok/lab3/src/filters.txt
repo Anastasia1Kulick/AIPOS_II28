@@ -1,0 +1,16 @@
+Фильтры захвата (Capture Filters):
+  HTTP/HTTPS страница:   tcp port 80 or tcp port 443
+  ping:                  icmp or arp
+  TCP сеанс лаб.1:       tcp port 8080
+  UDP сеанс лаб.2:       udp port 6666
+  ARP:                   arp
+
+Фильтры отображения (Display Filters):
+  IP:                    ip
+  HTTP:                  http
+  TLS:                   tls
+  TCP порт сервера:      tcp.port == 8080
+  UDP порт сервера:      udp.port == 6666
+  ICMP:                  icmp
+  ARP:                   arp
+  TCP SYN:               tcp.flags.syn == 1 && tcp.flags.ack == 0
