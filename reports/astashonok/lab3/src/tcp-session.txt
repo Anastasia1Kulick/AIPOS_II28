@@ -1,0 +1,8 @@
+<<< Hello, Student!
+>>> privet TCP
+<<< privet TCP
+>>> save capture-tcp.txt
+>>> pervaya stroka
+>>> vtoraya stroka
+>>> #end##
+<<< OK: file capture-tcp.txt created
