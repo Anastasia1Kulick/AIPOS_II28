@@ -2,7 +2,7 @@
 
 ссылка на лабы: https://www.dropbox.com/scl/fo/2z94zbdw1902okbihy8le/AFK0Ot0sfXZHHLbO-n0Sn6Q?rlkey=pi9xojkvhmeyi9o3p1h97xo4w&dl=0
 
-ссылка на электронную очередь: https://docs.google.com/spreadsheets/d/1FFfxMHh_qEtyVldmp9tDRgwITp5Y6SA4VW2Xh6iDvrs/edit?usp=sharing
+ссылка на электронную очередь: https://docs.google.com/spreadsheets/d/1x0B7XcSn1XExBNB0QCyTq5gPPODQ6tboEs2Ct2TDWYc/edit?usp=drivesdk
 
 ссылка на электронную ведомость: https://docs.google.com/spreadsheets/d/1esBjBMWBkn2GBHyKEAzKP-CuAJUphPBEWrAmjG0f6pg/edit?usp=sharing
 
