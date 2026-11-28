@@ -1,0 +1,59 @@
+﻿ЛАБОРАТОРНАЯ №6. RIP. ВАРИАНТ 3.
+Маршрутизаторы: R1 - R4 - R3 - R2 (цепочка), PC: P1(R1), P4(R4), P3(R3), P2(R2).
+Адреса: LAN 192.168.1.0/24 ... 192.168.4.0/24; каналы 10.0.0.0/30, 10.0.0.4/30, 10.0.0.8/30.
+
+R1:
+ enable
+ configure terminal
+ interface GigabitEthernet0/0
+  ip address 192.168.1.1 255.255.255.0
+  no shutdown
+ interface GigabitEthernet0/1
+  ip address 10.0.0.1 255.255.255.252
+  no shutdown
+ router rip
+  version 2
+  network 192.168.1.0
+  network 10.0.0.0
+  no auto-summary
+ end
+ write memory
+
+R4:
+ interface GigabitEthernet0/0
+  ip address 192.168.4.1 255.255.255.0
+ interface GigabitEthernet0/1
+  ip address 10.0.0.5 255.255.255.252
+ interface GigabitEthernet0/2
+  ip address 10.0.0.2 255.255.255.252
+ router rip
+  version 2
+  network 192.168.4.0
+  network 10.0.0.0
+  no auto-summary
+
+R3:
+ interface GigabitEthernet0/1
+  ip address 10.0.0.9 255.255.255.252
+ interface GigabitEthernet0/2
+  ip address 10.0.0.6 255.255.255.252
+ interface Vlan1
+  ip address 192.168.3.1 255.255.255.0
+ router rip
+  version 2
+  network 192.168.3.0
+  network 10.0.0.0
+  no auto-summary
+
+R2:
+ interface GigabitEthernet0/1
+  ip address 10.0.0.10 255.255.255.252
+ interface GigabitEthernet0/2
+  ip address 192.168.2.1 255.255.255.0
+ router rip
+  version 2
+  network 192.168.2.0
+  network 10.0.0.0
+  no auto-summary
+
+Проверка: show ip route (записи R), ping 192.168.4.10 / 192.168.2.10 / 192.168.3.10.
