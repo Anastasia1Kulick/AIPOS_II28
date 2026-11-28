@@ -1,0 +1,25 @@
+﻿ЛАБОРАТОРНАЯ №7. МАРШРУТ ПО УМОЛЧАНИЮ. ВАРИАНТ 3.
+Сеть и адреса — как в лабораторной №6. На R3 добавлен веб-сервер 192.168.3.10.
+
+R3:
+ enable
+ configure terminal
+ ip route 0.0.0.0 0.0.0.0 Vlan1
+ router rip
+  default-information originate
+ end
+ write memory
+
+Проверка:
+ R3# show ip route        -> S* 0.0.0.0/0 is directly connected, Vlan1
+ R1# show ip route        -> R* 0.0.0.0/0 [120/1] via 10.0.0.2
+ R2# show ip route        -> R* 0.0.0.0/0 [120/1] via 10.0.0.9
+ R4# show ip route        -> R* 0.0.0.0/0 [120/1] via 10.0.0.6
+
+Сервер (Server0, подключён к R3 Fa0/2/2):
+ IP 192.168.3.10 / 255.255.255.0, шлюз 192.168.3.1
+ Services -> HTTP: On
+ Services -> DNS: A Record www.site.ru -> 192.168.3.10
+ На P1/P2 в IP Configuration указать DNS 192.168.3.10.
+
+Проверка: с P1 открыть в браузере http://www.site.ru, ping 192.168.3.10.
